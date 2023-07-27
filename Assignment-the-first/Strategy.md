@@ -28,41 +28,6 @@ Independent Functions:
              R4: [@:C-G, TAG, +, JJE]
   ```
 
-Variables:
-
-1. A list of input filenames, named ```in_list```
-
-   ```
-   1294_S1_L008_R1_001.fastq.gz
-   1294_S1_L008_R2_001.fastq.gz
-   1294_S1_L008_R3_001.fastq.gz
-   1294_S1_L008_R4_001.fastq.gz
-   ```
-
-2. A list of output filenames, named ```out_list```
-   ```
-   1294_S1_L008_R1_001_nonmatching.fastq
-   1294_S1_L008_R2_001_nonmatching.fastq
-   1294_S1_L008_R1_001_unknown.fastq
-   1294_S1_L008_R2_001_unknown.fastq
-   1294_S1_L008_R1_001_B1.fastq
-   1294_S1_L008_R2_001_B1.fastq
-   1294_S1_L008_R1_001_B9.fastq
-   1294_S1_L008_R2_001_B9.fastq
-   .
-   .
-   .
-   1294_S1_L008_R<1|2>_001_<Index ID>.fastq
-   ```
-
-3. A dictionary mapping index sequences to their respective identifiers, named ```idx_codes```
-
-4. A dictionary mapping all possible matching index codes to observed counts, named ```mtch_ctr```
-
-5. A dictionary mapping all possible mismatched pairs of index codes to observed counts, named ```msmtch_ctr```. Pairs of mismatched codes should be in alphabetical order to avoid duplicates.
-
-6. An accumulator (int) counting the number of read pairs with unknown indexes, named ```unk_ctr```.
-
 **Process:**
 1. Open the 4 input files to read from.
 2. Open each of the 52 output files to write to.
