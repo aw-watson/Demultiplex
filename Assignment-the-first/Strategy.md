@@ -64,53 +64,25 @@ Variables:
 6. An accumulator (int) counting the number of read pairs with unknown indexes, named ```unk_ctr```.
 
 **Process:**
-
-```
-for each name in in_list:
-  -open the file in read mode
-for each name in out_list:
-  -open the file in write mode
-
-while the input files have lines:
-  -set unk_ctr, all values in mtch_ctr, and all values in msmtch_ctr to 0
-  -consume 4 lines from each input file, and store them in lists: R1, R2, R3, R4
-  -replace the second index read (in R3) with its reverse complement, storing it back into the list
-  -pass lists to amend_headers
-
-  if the first index read is not in idx_codes
-    OR the second index read is not in idx_codes
-    OR the first index read's average quality score is below a cutoff
-    OR the second index read's average quality score is below a cutoff:
-
-    -write R1 to 1294_S1_L008_R1_001_unknown.fastq
-    -write R4 to 1294_S1_L008_R2_001_unknown.fastq
-    -increment unk_ctr
-    -continue to next iteration
-
-  if the two index reads are not the same sequence:
-    -write R1 to 1294_S1_L008_R1_001_nonmatching.fastq
-    -write R4 to 1294_S1_L008_R2_001_nonmatching.fastq
-    -increment the appropriate entry in msmtch_ctr
-    -continue to next iteration
-
-  #if execution reaches this line, we have matching indexes
-  increment the appropriate entry in mtch_ctr
-  write R1 to 1294_S1_L008_R1_001_<index code>.fastq
-  write R4 to 1294_S1_L008_R2_001_<index code>.fastq
-
-for each name in in_list:
-  -close file
-for each name in out_list:
-  -close file
-
-for each entry in mtch_ctr:
-  if the observed count is 0:
-    -delete 1294_S1_L008_R1_001_<index code>.fastq
-    -delete 1294_S1_L008_R2_001_<index code>.fastq
-
--print number of index pairs with unknown indices
-for each entry in mtch_ctr:
-  -print the number of matching index pairs corresponding to that code
-for each entry in msmtch_ctr:
-  -print the number of index pairs with that mismatch #if possible, format this as a triangular table
-```
+1. Open the 4 input files to read from.
+2. Open each of the 52 output files to write to.
+3. Read one record at a time from each input file, storing in appropriate lists.
+4. Replace the sequence of the second index with its reverse complement.
+5. Add the first index and second index to the headers of both the first and second read.
+6. If either index is not in our list of indices OR the average quality score for either index is below a chosen threshold:
+      1. Write the record for the first read to 
+      2. Write the record for the second read to
+      3. Increment
+      4. Go on to the next record
+7. Otherwise, if the indices are not the same:
+      1. Write the record for the first read to 
+      2. Write the record for the second read to
+      3. Increment
+      4. Go on to the next record
+8. Otherwise, we have matching indices:
+      1. Write the record for the first read to
+      2. Write the record for the second read to
+      3. Increment
+      4. Go on to the next record
+9. After processing all records, close all input and output files.
+10. Output
