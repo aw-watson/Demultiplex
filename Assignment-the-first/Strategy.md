@@ -37,17 +37,17 @@ Independent Functions:
 6. If either index is not in our list of indices OR the average quality score for either index is below a chosen threshold:
       1. Write the record for the first read to 
       2. Write the record for the second read to
-      3. Increment
+      3. Increment a counter for unknown index pairs
       4. Go on to the next record
 7. Otherwise, if the indices are not the same:
       1. Write the record for the first read to 
       2. Write the record for the second read to
-      3. Increment
+      3. Increment a counter (in a dictionary) for mismatched index pairs
       4. Go on to the next record
 8. Otherwise, we have matching indices:
       1. Write the record for the first read to
       2. Write the record for the second read to
-      3. Increment
+      3. Increment a counter (in a dictionary) for matching index pairs
       4. Go on to the next record
 9. After processing all records, close all input and output files.
 10. Output
