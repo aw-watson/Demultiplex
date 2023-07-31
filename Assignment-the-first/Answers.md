@@ -120,3 +120,12 @@ Independent Functions:
              R3: [@, G, +, E]
              R4: [@:C-G, TAG, +, JJE]
   ```
+
+```python
+    def qual_score(phred_score: str) -> float:
+        """Returns the average Phred score of a string of contiguous Phred+33 scores"""
+        return average_phred_score
+
+    Input: #AAAFJJJ
+    Output: 32.25
+```
