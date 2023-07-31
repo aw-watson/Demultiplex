@@ -56,32 +56,38 @@ Total number of matching index pairs:    <#>
 4. Pseudocode
 
 **Process:**
-1. Open the 4 input files to read from.
-2. Open each of the 52 output files to write to.
-3. Read one record at a time from each input file, storing in appropriate lists.
-4. Replace the sequence of the second index with its reverse complement.
-5. Add the first index and second index to the headers of both the first and second read.
-6. If either index is not in our list of indices OR the average quality score for either index is below a chosen threshold:
+1. Create a dictionary of {index sequence:index code} for our known indices.
+2. Create a dictionary of {index code: occurrence count} for our known indices, with all values initially 0.
+3. Create an empty dictionary to add mismatched pairs to.
+4. Initialize a counter for unknown index pairs.
+5. Create 4 empty lists of 4 elements to store our records.
+6. Create 
+7. Open the 4 input files to read from.
+8. Open each of the 52 output files to write to.
+9. Read one record at a time from each input file (consume 4 lines from each file), storing in the lists.
+10. Replace the sequence of the second index with its reverse complement, in place.
+11. Add the first index and second index to the headers of both the first and second read.
+12. If either index is not in our dictionary of indices OR the average quality score for either index is below a chosen threshold:
       1. Write the record for the first read to the R1 file for unknown reads
       2. Write the record for the second read to the R2 file for unknown reads
       3. Increment a counter for unknown index pairs
       4. Go on to the next record
-7. Otherwise, if the indices are not the same:
+13. Otherwise, if the indices are not the same:
       1. Write the record for the first read to the R1 file for mismatched reads.
       2. Write the record for the second read to the R2 file for mismatched reads.
       3. Increment a counter (in a dictionary) for mismatched index pairs.
       4. Go on to the next record.
-8. Otherwise, we have matching indices:
+14. Otherwise, we have matching indices:
       1. Write the record for the first read to the R1 file for that index.
       2. Write the record for the second read to the R2 file for that index.
       3. Increment a counter (in a dictionary) for matching index pairs.
       4. Go on to the next record.
-9. After processing all records, close all input and output files.
-10. Print the number of unknown or low-quality index pairs.
-11. Go over the dictionary of mismatched index pairs.
+15. After processing all records, close all input and output files.
+16. Print the number of unknown or low-quality index pairs.
+17. Go over the dictionary of mismatched index pairs.
       1. Write each mismatch and the number of occurrences to a tab-separated text file, with one line per unique mismatch.
       2. Print the total number of mismatched index pairs.
-12. Go over the dictionary of matching index pairs.
+18. Go over the dictionary of matching index pairs.
       1. Write each index and the number of occurrences to a tab-separated text file, with one line per index.
       2. If the number of occurrences is 0, delete the R1 and R2 output files corresponding to that index.
       3. Print the total number of matching index pairs.
@@ -126,6 +132,6 @@ Independent Functions:
         """Returns the average Phred score of a string of contiguous Phred+33 scores"""
         return average_phred_score
 
-    Input: #AAAFJJJ
+    Input: "#AAAFJJJ"
     Output: 32.25
 ```
