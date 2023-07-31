@@ -13,7 +13,7 @@
 2. Per-base NT distribution
     1. Use markdown to insert your 4 histograms here.
     2. **YOUR ANSWER HERE**
-    3. **YOUR ANSWER HERE**
+    3. 7304664 indices have 'N' base calls, confirmed with ```zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R2_001.fastq.gz /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R3_001.fastq.gz | sed -n '2~4p' | grep "N" | wc -l```, out of 726493470 indices across both index reads (```zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R2_001.fastq.gz /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R3_001.fastq.gz | sed -n '2~4p' | wc -l```).
     
 ## Part 2
 1. Define the problem
