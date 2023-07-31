@@ -83,7 +83,8 @@ Total number of matching index pairs:    <#>
       2. Print the total number of mismatched index pairs.
 12. Go over the dictionary of matching index pairs.
       1. Write each index and the number of occurrences to a tab-separated text file, with one line per index.
-      2. Print the total number of matching index pairs.
+      2. If the number of occurrences is 0, delete the R1 and R2 output files corresponding to that index.
+      3. Print the total number of matching index pairs.
 
 **End process description**
 
