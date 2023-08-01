@@ -12,7 +12,7 @@
 
 2. Per-base NT distribution
     1. Use markdown to insert your 4 histograms here.
-    2. **YOUR ANSWER HERE**
+    2. A good first cutoff, following [Wright and Vetsigian's 2016 publication](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-016-3217-x), is an average index quality score of 26. We can then vary our quality threshold experimentally, and observe how effective it is at removing reads with mismatching index pairs. As the authors note, filtering index reads based on quality is enough to remove almost all index-hopped reads. We therefore do not need any quality score cutoff for our biological reads. 
     3. 7304664 indices have 'N' base calls, confirmed with ```zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R2_001.fastq.gz /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R3_001.fastq.gz | sed -n '2~4p' | grep "N" | wc -l```, out of 726493470 indices across both index reads (```zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R2_001.fastq.gz /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R3_001.fastq.gz | sed -n '2~4p' | wc -l```).
     
 ## Part 2
