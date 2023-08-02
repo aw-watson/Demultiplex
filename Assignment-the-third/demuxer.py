@@ -37,6 +37,8 @@ def get_args():
 #script body
 
 #TODO: input validation/safeguards
+#TODO: cleanup keys-some overdetermination happening
+#TODO: general cleanup
 
 #assign arguments to variables--partly for convenience, partly for annotations
 args = get_args()
@@ -149,7 +151,7 @@ while True:
             r4[i] += '\n'
         #write output
         output_files[f"{prefix}R1{suffix}_{code}.fastq.gz"].writelines(r1)
-        output_files[f"{prefix}R2{suffix}_{code}.fastq.gz"].writelines(r1)
+        output_files[f"{prefix}R2{suffix}_{code}.fastq.gz"].writelines(r4)
 #close input files
 for file in input_files.values():
     file.close()
@@ -158,9 +160,26 @@ for file in output_files.values():
     file.close()
 
 #TODO: non-file output
+mmtch_acc: int = 0
+mtch_acc: int = 0
 
-for idx_pair in match_ctr.keys():
-    if match_ctr[idx_pair] == 0:
-        os.remove(f"{out_dir}/{prefix}R1{suffix}_{idx_pair}.fastq.gz")
-        os.remove(f"{out_dir}/{prefix}R2{suffix}_{idx_pair}.fastq.gz")
+with open(f"{out_dir}/mismatched_counts.tsv", 'wt') as mmfh:
+    mmfh.write("Index Pair\tOccurrences\n")
+    for mm_pair in mism_ctr.keys():
+        mmtch_acc += mism_ctr[mm_pair]
+        mmfh.write(f"{mm_pair}\t{mism_ctr[mm_pair]}\n")
+
+with open(f"{out_dir}/matched_counts.tsv", 'wt') as mfh:
+    mfh.write("Index\tOccurrences\n")
+    for idx_pair in match_ctr.keys():
+        mfh.write(f"{idx_pair}\t{match_ctr[idx_pair]}\n")
+        mtch_acc += match_ctr[idx_pair]
+        if match_ctr[idx_pair] == 0:
+            os.remove(f"{out_dir}/{prefix}R1{suffix}_{idx_pair}.fastq.gz")
+            os.remove(f"{out_dir}/{prefix}R2{suffix}_{idx_pair}.fastq.gz")
+
+print(f"Number of unknown or low-quality index pairs:\t{bad_idx_ctr}\n\
+    Total number of mismatched index pairs:\t{mmtch_acc}\n\
+    Total number of matching index pairs:\t{mtch_acc}")
+
 
