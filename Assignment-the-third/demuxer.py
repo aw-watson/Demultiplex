@@ -15,15 +15,6 @@ def amend_headers(R1: list, R2: list, R3: list, R4: list) -> None:
     R4[0] += ":" + R2[1] + "-" + R3[1]
     return
 
-def construct_mismatch(idx1: str, idx2:str) -> str:
-    '''Helper function. Given two strings, returns them in alphabetical order, separated by a hyphen.
-    Therefore, returns one string per combination of inputs, regardless of order'''
-    if idx1 < idx2:
-        return idx1 + "-" + idx2
-    else:
-        return idx2 + "-" + idx1
-
-
 def get_args():
     parser = argparse.ArgumentParser(description = "Demultiplex Illumina sequencing data")
     parser.add_argument("-i", "--input-directory", help="Directory with 4 gzipped FASTQ files containing Illumina sequencing data. \
@@ -128,7 +119,7 @@ while True:
     #else if we have valid but mismatched indices
     elif r2[1] != r3[1]:
         #increment counter
-        idx_pair = construct_mismatch(r2[1], r3[1])
+        idx_pair = idx_dict[r2[1]] + "\t" +idx_dict[r3[1]]
         if idx_pair not in mism_ctr:
             mism_ctr[idx_pair] = 1
         else:
