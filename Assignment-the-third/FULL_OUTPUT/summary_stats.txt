@@ -1,0 +1,3 @@
+Number of unknown or low-quality index pairs:	408 465 93
+Total number of mismatched index pairs:	595 645
+Total number of matching index pairs:	321 804 497
