@@ -1,0 +1,147 @@
+Notebook for André Watson, for the demultiplexing assignment in Bi622, during summer of 2023.
+
+Goal: Demultiplex Illumina sequencing data with dual-matched indices
+
+-----------
+2023-Jul-31
+-----------
+
+****************
+Data exploration
+****************
+
+Let's quickly identify which files contain index reads, and which contain sequence reads:
+
+zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R1_001.fastq.gz | head -n 4
+zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R2_001.fastq.gz | head -n 4
+zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R3_001.fastq.gz | head -n 4
+zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R4_001.fastq.gz | head -n 4
+
+The obvious difference in length lets us see that R2 and R3 are index reads, while R1 and R4 are index reads.
+The sequence line for R2 is NCTTCGAC, while the sequence line for R3 is NTCGAAGA.
+
+NCTTCGAC can only correspond to one of our known indices: TCTTCGAC/C10
+NTCGAAGA corresponds to none of our known indices, but its reverse complement (TCTTCGAN) corresponds to C10 again.
+So: we'll need to get the reverse complement of R3 reads in order to compare indices.
+
+File|label
+R1|read1
+R2|index1
+R3|index2
+R4|read2
+
+This matches our previous knowledge about Illumina sequencing.
+
+We can visually see that the index reads (R2, R3) are 8 bases long.
+zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R1_001.fastq.gz | head -n 2 | tail -n 1 | wc -c
+gives us a character count of 102 or the sequence lines. With one newline character, that means
+our sequence reads (R1,R4) are 101 bases long.
+
+I see '#' and '-' in the quality lines, both of which have ASCII scores lower than 64. Our Phred encoding is likely Phred+33.
+
+-----------
+2023-Aug-1
+-----------
+More data exploration-made a script and shell wrapper to report average quality scores per base position across our four input files.
+
+********************
+Environment creation
+********************
+mamba create -n bgmp-demux
+conda activate bgmp-demux
+mamba install matplotlib
+***************************
+
+***********************************
+Quality distribution script details
+***********************************
+Name: qual_dist.py
+Arguments:
+	-f: Input FASTQ file
+	-o: Name of output file. .png extension added by script
+	-l: Description of the input file, used for plot titles.
+Outputs:
+	A single bar chart showing the average Phred+33 quality scores for each base position in the input FASTQ file
+**********************************************************************************************************************
+
+*********************
+Wrapper for QD script
+*********************
+Name: qual_runner.sh
+Ran on our four input FASTQ files.
+All slurm directives and arguments contained in the shell script.
+Run command: ./sbatch qual_runner.sh
+************************************
+
+We see some drops in the early base positions of the sequence reads, but I think everything is above 30.
+
+-----------
+2023-Aug-2
+-----------
+
+Added a function to bioinfo.py to reverse complement a sequence. Updated version, added some tests. 
+Finished a basic demultiplexing implementation -- I'll write down details after the final version. 
+
+------------
+2023-Aug-3
+------------
+Cleaned up demultiplexing script. Ran for the first time---took 16h55m29s.
+
+-----------
+2023-Aug-9
+-----------
+Stopped writing to gzipped files, which was consuming incredible amounts of time. Ran demultiplexing script again. Took under 2 hours. Stored output in Assignment-the-third/FULL_OUTPUT
+
+-----------
+2023-Aug-11
+-----------
+
+Pushed changes. Copied the script's printed output to summary_stats.txt and put that in FULL_OUTPUT
+
+
+******************************
+Demultiplexing script details
+*******************************
+Name: demuxer.py
+Arguments:
+		-i: The directory containing 4 input gzipped FASTQ files. Files should be identically named with the exception of an "R1", "R2", "R3" or "R4" somewhere in the file name. These files are the first sequence read, first index read, second index read, and second sequence read, respectively.
+		-o: Name of an output directory to write results to.
+		-x: A list of valid indices to separate out. Mine is in Assignment-the-third/idx_list.txt
+		-q: Integer. If the average quality of an index read is below this cutoff, the reads are classified as unknown, even if the base calls match a valid index.
+		
+Outputs:
+	Printed output: "Number of unknowon or low-quality index pairs: [#]
+			Total number of mismatched index pairs: [#]
+			Total number of matching index paris: [#]"
+		
+	Summary tables:
+		"matched_counts.tsv": Tab-separated file. One header row.
+				      All other rows have: the base sequence of the index, the number of occurrences (corresponding records with matching indices) encountered when demultiplexing, and the percentage of successfully demultiplexed reads that that index represents.
+		"mismatched_counts.tsv:" (# of valid indices + 1) x (# of valid indices + 1) size tab-separated table
+					 Records occurrences of records with valid but mismatched indices.
+					 Row indicates the first index read, column indicates the second index read.
+					 First row contains 1 placeholder, then all valid index sequences
+					 First column contains 1 placeholder, then all valid index sequences
+	Demultiplexed files: Keeps the same file name format as the input files, but appends "_IDENTIFIER" before the .fastq extension, where IDENTIFIER is one of: "unknown", "mismatched", or the nucleotide sequence of a valid index.
+	An R1 and R2 file both exist for each of these possibilities, where the R1 file contains the first sequence read of the corresponding record, and the R2 file contains the second sequence read. Header in the R1 and R2 files have had the indices for that record appended, allowing for some quick error-checking in the demultiplexed files.
+
+*******************************
+Demultiplexing wrapper details
+******************************
+Name: demux_wrapper.sh
+
+Overview:
+	-Activates bgmp-demux environment (see details above)
+	-(Timed command) runs the demultiplexer with a quality cutoff of 26, output directory of
+	Assignment-the-third/FULL_OUTPUT
+	-Zips all fastq files in the output directory.
+
+
+**************************
+Running script and results
+**************************
+Sbatch command:./sbatch demux_wrapper.sh
+Successful job ID: 28496
+Elapsed time (Demultiplexing only): 1:51:22
+Maximum resident set size: 263220
+
