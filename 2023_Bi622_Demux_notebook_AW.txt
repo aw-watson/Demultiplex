@@ -50,6 +50,7 @@ Environment creation
 mamba create -n bgmp-demux
 conda activate bgmp-demux
 mamba install matplotlib
+conda install pigz
 ***************************
 
 ***********************************
@@ -140,8 +141,55 @@ Overview:
 **************************
 Running script and results
 **************************
-Sbatch command:./sbatch demux_wrapper.sh
+Sbatch command:sbatch ./demux_wrapper.sh
 Successful job ID: 28496
 Elapsed time (Demultiplexing only): 1:51:22
 Maximum resident set size: 263220
 
+
+------------
+2023-Oct-22
+------------
+
+Making some adjustments. Removed TODOs--code is clean
+enough and we can assume a properly formatted input FASTQ file.
+
+Refamiliarizing myself with the code.
+Received feedback on: checking for index validity before checking qscore
+	-not needed: this is already the case due to python short-circuiting 'and's
+-Other feedback:
+	-recommended use of pigz
+		-will have to edit demux_wrapper
+		-added pigz to conda environment, made note in that section
+	-reporting rounded percentages
+		-will need to refamiliarize myself with output
+
+
+------------
+2023-Dec-27
+------------
+
+Coming back to this.
+Rerunning job while timing compression commands to get a better time estimate.
+
+
+gzip:
+
+Sbatch command:./sbatch demux_wrapper.sh
+Successful job ID: 1912856
+Elapsed time (Demultiplexing only): 1:25:27
+Maximum resident set size: 260748 kbytes
+Elapsed time (compressing): 4:43:09
+Maximum resident set size: 2060 kbytes
+
+pigz:
+
+Sbatch command:./sbatch demux_wrapper.sh
+Successful job ID: 1912737
+Elapsed time (Demultiplexing only): 1:23:34
+Maximum resident set size: 260750 kbytes
+Elapsed time (compressing): 1:11:21
+Maximum resident set size: 34408 kbytes
+
+
+A major timesaver.

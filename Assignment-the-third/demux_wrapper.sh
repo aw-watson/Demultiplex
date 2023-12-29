@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=bgmp                    #REQUIRED: which account to use
-#SBATCH --partition=compute               #REQUIRED: which partition to use
+#SBATCH --partition=bgmp               #REQUIRED: which partition to use
 #SBATCH --cpus-per-task=4                 #optional: number of cpus, default is 1
 #SBATCH --mem=16GB                        #optional: amount of memory, default is 4GB
 #SBATCH --output=/projects/bgmp/apwat/bioinfo/Bi622/Demultiplex/Assignment-the-third/logs/demuxing_out_%j.log
@@ -17,4 +17,4 @@ DIR="/projects/bgmp/apwat/bioinfo/Bi622/Demultiplex"
     -q 26
 
 #zip files
-gzip $DIR/Assignment-the-third/FULL_OUTPUT/*.fastq
+/usr/bin/time -v pigz $DIR/Assignment-the-third/FULL_OUTPUT/*.fastq

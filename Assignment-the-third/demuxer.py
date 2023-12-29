@@ -29,9 +29,6 @@ def get_args():
 
 #script body
 
-#TODO: input validation/safeguards
-#TODO: general cleanup
-
 #assign arguments to variables--partly for convenience, partly for annotations
 args = get_args()
 in_list : list = os.listdir(args.input_directory)
@@ -172,7 +169,7 @@ with open(f"{out_dir}/mismatched_counts.tsv", 'wt') as mmfh:
 with open(f"{out_dir}/matched_counts.tsv", 'wt') as mfh:
     mfh.write("Index\tOccurrences\tPercent of Successfully Demultiplexed Reads\n")
     for idx_pair in match_ctr.keys():
-        mfh.write(f"{idx_pair}\t{match_ctr[idx_pair]}\t{match_ctr[idx_pair]/total_matched*100}\n")
+        mfh.write(f"{idx_pair}\t{match_ctr[idx_pair]}\t{round(match_ctr[idx_pair]/total_matched*100, 2)}\n")
         if match_ctr[idx_pair] == 0:
             os.remove(f"{out_dir}/{prefix}R1{suffix}_{idx_pair}.fastq")
             os.remove(f"{out_dir}/{prefix}R2{suffix}_{idx_pair}.fastq")
